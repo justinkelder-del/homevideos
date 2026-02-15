@@ -3,76 +3,115 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My YouTube Links</title>
-  <meta name="description" content="A simple video hub with YouTube links." />
+  <title>My Video Hub</title>
+  <meta name="description" content="A Netflix-style video hub with YouTube links." />
   <style>
     :root { --max: 1100px; --radius: 14px; }
     * { box-sizing: border-box; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#0b0d12; color:#eef2ff; }
+    body {
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:#0b0d12;
+      color:#eef2ff;
+    }
     header { padding: 28px 18px 10px; }
     .wrap { max-width: var(--max); margin: 0 auto; }
-    h1 { margin:0 0 8px; font-size: 28px; }
+
+    h1 { margin:0 0 8px; font-size: 28px; letter-spacing: .2px; }
     p { margin:0; opacity:.8; }
+
     .bar { display:flex; gap:12px; align-items:center; margin:16px 0 18px; }
     input {
-      width:100%; padding:12px 14px; border-radius: 12px; border: 1px solid #2a3242;
-      background:#0f1420; color:#eef2ff; outline:none;
+      width:100%;
+      padding:12px 14px;
+      border-radius: 12px;
+      border: 1px solid #2a3242;
+      background:#0f1420;
+      color:#eef2ff;
+      outline:none;
     }
     input::placeholder { color:#98a2b3; }
+
     .player {
-      border:1px solid #2a3242; border-radius: var(--radius); overflow:hidden; background:#0f1420;
+      border:1px solid #2a3242;
+      border-radius: var(--radius);
+      overflow:hidden;
+      background:#0f1420;
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
     }
     .player iframe { width:100%; aspect-ratio: 16/9; border:0; display:block; }
-    .grid { 
-  display:grid; 
-  grid-template-columns: repeat(3, minmax(0, 1fr)); 
-  gap:12px; 
-  margin:18px 0 40px; 
-}
 
-/* 2 columns on tablets/smaller screens */
-@media (max-width: 900px){ 
-  .grid{ grid-template-columns: repeat(2, 1fr);} 
-}
-
-/* still 2 columns on phones (optional) */
-@media (max-width: 560px){ 
-  .grid{ grid-template-columns: repeat(2, 1fr);} 
-}
-
-/* if you prefer 1 column on very small phones, use 420px instead */
-@media (max-width: 420px){ 
-  .grid{ grid-template-columns: 1fr;} 
-}
-    .card {
-      border:1px solid #2a3242; border-radius: var(--radius); overflow:hidden; background:#0f1420; cursor:pointer;
-      transition: transform .12s ease, border-color .12s ease;
+    .rowbar{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      margin-top:10px; flex-wrap: wrap;
     }
-    .card:hover { transform: translateY(-2px); border-color:#4c5c78; }
-    .thumb { width:100%; height: 120px; object-fit: cover; display:block; }
-    .meta { padding: 12px 12px 14px; }
-    .title { font-weight: 650; font-size: 14px; line-height: 1.25; margin:0 0 6px; }
-    .note { font-size: 12px; opacity:.75; margin:0; }
-    .row {
-      display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:10px;
-      flex-wrap: wrap;
-    }
+    .now { opacity:.85; font-size: 13px; }
     .btn {
-      appearance:none; border:1px solid #2a3242; background:#0f1420; color:#eef2ff;
-      padding:10px 12px; border-radius: 12px; cursor:pointer; text-decoration:none;
+      appearance:none;
+      border:1px solid #2a3242;
+      background:#0f1420;
+      color:#eef2ff;
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      text-decoration:none;
+      transition: border-color .12s ease, transform .12s ease;
     }
-    .btn:hover { border-color:#4c5c78; }
-    footer { padding: 22px 18px; border-top: 1px solid #1f2633; opacity:.75; }
+    .btn:hover { border-color:#4c5c78; transform: translateY(-1px); }
+
+    /* Netflix-style rows */
+    main { padding: 0 18px; }
+    .section { margin: 18px auto 26px; max-width: var(--max); }
+    .section h2 { font-size: 16px; margin: 0 0 10px; opacity: .95; font-weight: 650; }
+
+    .rail {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 4px 2px 10px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .rail::-webkit-scrollbar { height: 10px; }
+    .rail::-webkit-scrollbar-thumb { background: #2a3242; border-radius: 999px; }
+    .rail::-webkit-scrollbar-track { background: transparent; }
+
+    .card {
+      flex: 0 0 auto;
+      width: 220px;
+      border: 1px solid #2a3242;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #0f1420;
+      cursor: pointer;
+      scroll-snap-align: start;
+      transition: transform .14s ease, border-color .14s ease;
+      outline: none;
+    }
+    .card:hover { transform: scale(1.04); border-color: #4c5c78; }
+    .card:focus-visible { border-color:#7aa2ff; box-shadow: 0 0 0 3px rgba(122,162,255,.25); }
+
+    .thumb { width: 100%; height: 124px; object-fit: cover; display: block; }
+    .meta { padding: 10px 10px 12px; }
+    .title { font-weight: 650; font-size: 13px; line-height: 1.25; margin: 0 0 4px; }
+    .note { font-size: 12px; opacity: .75; margin: 0; }
+
+    footer { padding: 22px 18px; border-top: 1px solid #1f2633; opacity:.75; margin-top: 18px; }
     code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    /* Make cards slightly smaller on small screens */
+    @media (max-width: 560px){
+      .card { width: 180px; }
+      .thumb { height: 110px; }
+    }
   </style>
 </head>
 
 <body>
   <header>
     <div class="wrap">
-      <h1>My YouTube Links</h1>
-      <p>Click a video to play it. Use search to filter.</p>
+      <h1>My Video Hub</h1>
+      <p>Netflix-style rows. Click a video to play it. Use search to filter.</p>
 
       <div class="bar">
         <input id="search" type="search" placeholder="Search videos…" />
@@ -88,8 +127,8 @@
         ></iframe>
       </div>
 
-      <div class="row">
-        <span id="nowPlaying" style="opacity:.85; font-size: 13px;"></span>
+      <div class="rowbar">
+        <span id="nowPlaying" class="now"></span>
         <a class="btn" id="openOnYouTube" href="https://www.youtube.com/watch?v=xmB4ypSYQ9M" target="_blank" rel="noopener noreferrer">
           Open on YouTube
         </a>
@@ -97,8 +136,8 @@
     </div>
   </header>
 
-  <main class="wrap">
-    <div class="grid" id="grid"></div>
+  <main>
+    <div id="rows"></div>
   </main>
 
   <footer>
@@ -108,16 +147,14 @@
   </footer>
 
   <script>
-    // ✅ Your videos live here. Add more by copying the object and changing id/title/note.
+    // ✅ Add your videos here (YouTube VIDEO IDs)
     const videos = [
-      {
-        id: "xmB4ypSYQ9M",
-        title: "My First Video",
-        note: "Click to watch"
-      }
+      { id: "xmB4ypSYQ9M", title: "Video 1", note: "Click to watch" },
+      { id: "feHz6uVy36c", title: "Video 2", note: "Click to watch" },
+      { id: "FOfIbEYPZdc", title: "Video 3", note: "Click to watch" }
     ];
 
-    const grid = document.getElementById("grid");
+    const rowsEl = document.getElementById("rows");
     const player = document.getElementById("player");
     const search = document.getElementById("search");
     const nowPlaying = document.getElementById("nowPlaying");
@@ -137,43 +174,75 @@
       player.src = `https://www.youtube.com/embed/${video.id}`;
       nowPlaying.textContent = `Now playing: ${video.title}`;
       openOnYouTube.href = `https://www.youtube.com/watch?v=${video.id}`;
+      // remember last played (optional Netflix feel)
+      try { localStorage.setItem("lastPlayedVideoId", video.id); } catch (_) {}
     }
 
-    function render(list) {
-      grid.innerHTML = "";
-      list.forEach(v => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.tabIndex = 0;
-        card.setAttribute("role", "button");
-        card.setAttribute("aria-label", `Play ${v.title}`);
+    function buildCard(v) {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", `Play ${v.title}`);
 
-        card.innerHTML = `
-          <img class="thumb" src="${thumbUrl(v.id)}" alt="Thumbnail for ${escapeHtml(v.title)}">
-          <div class="meta">
-            <p class="title">${escapeHtml(v.title)}</p>
-            <p class="note">${escapeHtml(v.note || "")}</p>
-          </div>
-        `;
+      card.innerHTML = `
+        <img class="thumb" src="${thumbUrl(v.id)}" alt="Thumbnail for ${escapeHtml(v.title)}">
+        <div class="meta">
+          <p class="title">${escapeHtml(v.title)}</p>
+          <p class="note">${escapeHtml(v.note || "")}</p>
+        </div>
+      `;
 
-        const play = () => {
-          setPlayer(v);
-          document.getElementById("playerWrap").scrollIntoView({ behavior: "smooth", block: "start" });
-        };
+      const play = () => {
+        setPlayer(v);
+        document.getElementById("playerWrap").scrollIntoView({ behavior: "smooth", block: "start" });
+      };
 
-        card.addEventListener("click", play);
-        card.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); play(); }
-        });
+      card.addEventListener("click", play);
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); play(); }
+      });
 
-        grid.appendChild(card);
+      return card;
+    }
+
+    function renderRows(list) {
+      // "Continue Watching" (last played) + "All Videos"
+      let lastPlayedId = null;
+      try { lastPlayedId = localStorage.getItem("lastPlayedVideoId"); } catch (_) {}
+
+      const lastPlayed = lastPlayedId ? list.find(v => v.id === lastPlayedId) : null;
+
+      const sections = [];
+      if (lastPlayed) sections.push({ title: "Continue Watching", videos: [lastPlayed] });
+      sections.push({ title: "All Videos", videos: list });
+
+      rowsEl.innerHTML = "";
+
+      sections.forEach(section => {
+        const wrap = document.createElement("div");
+        wrap.className = "section";
+
+        const title = document.createElement("h2");
+        title.textContent = section.title;
+
+        const rail = document.createElement("div");
+        rail.className = "rail";
+
+        section.videos.forEach(v => rail.appendChild(buildCard(v)));
+
+        wrap.appendChild(title);
+        wrap.appendChild(rail);
+        rowsEl.appendChild(wrap);
       });
     }
 
+    // Search filter
     search.addEventListener("input", () => {
       const q = search.value.trim().toLowerCase();
-      if (!q) return render(videos);
-      render(
+      if (!q) return renderRows(videos);
+
+      renderRows(
         videos.filter(v =>
           (v.title || "").toLowerCase().includes(q) ||
           (v.note || "").toLowerCase().includes(q) ||
@@ -182,9 +251,16 @@
       );
     });
 
-    // Init
-    render(videos);
-    setPlayer(videos[0]);
+    // Init: load last played if exists, else first
+    let initial = videos[0];
+    try {
+      const lastId = localStorage.getItem("lastPlayedVideoId");
+      const found = videos.find(v => v.id === lastId);
+      if (found) initial = found;
+    } catch (_) {}
+
+    renderRows(videos);
+    setPlayer(initial);
   </script>
 </body>
 </html>
