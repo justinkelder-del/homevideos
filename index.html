@@ -43,28 +43,34 @@
     .section { margin-top: 18px; }
     .section h2 { font-size: 16px; margin: 0 0 10px; }
 
-    .rail {
-      display:flex;
-      gap:12px;
-      overflow-x:auto;
-      padding-bottom:10px;
-      -webkit-overflow-scrolling: touch;
-    }
+    .rail{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 across on desktop */
+  gap: 16px;
+  overflow: visible; /* no slider */
+  padding-bottom: 0;
+}
 
-    .rail::-webkit-scrollbar { height:8px; }
-    .rail::-webkit-scrollbar-thumb { background:#2a3242; border-radius:999px; }
+/* 2 across on tablets */
+@media (max-width: 900px){
+  .rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
-    .card {
-      flex: 0 0 auto;
-      width: 340px;
-      cursor:pointer;
-      transition: transform .15s ease;
-    }
-    .card:hover { transform: scale(1.05); }
+/* 1 across on small phones */
+@media (max-width: 520px){
+  .rail { grid-template-columns: 1fr; }
+}
+
+    .card{
+  width: 100%;          /* fill grid cell */
+  cursor: pointer;
+  transition: transform .15s ease;
+}
+
 
     .thumb {
       width:100%;
-      height:190px;
+      height:170px;
       object-fit:cover;
       border-radius: var(--radius);
       display:block;
